@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { DataTableResource } from 'angular-4-data-table-bootstrap-4';
 
 @Component({
   selector: 'app-root',
@@ -41,12 +42,19 @@ export class AppComponent implements OnInit {
     { id: '26', name: 'Carissa Kunze', jobTitle: 'Regional Division Technician' }
   ];
 
-  displayedUsers: any[] = [];
-  itemCount = this.persons.length;
-  params = { offset: 0, limit: 10, sortBy: 'name', sortAsc: true };
+  itemResource = new DataTableResource(this.persons);
+  items = [];
+  itemCount = 0;
+  params: { offset: number; limit: number; sortBy?: string; sortAsc?: boolean } = {
+    offset: 0,
+    limit: 10,
+    sortBy: 'name',
+    sortAsc: true
+  };
   formFlag = 'add';
 
   constructor() {
+    this.itemResource.count().then(count => this.itemCount = count);
     this.reloadItems();
   }
 
@@ -64,29 +72,7 @@ export class AppComponent implements OnInit {
 
   reloadItems(params: { offset?: number; limit?: number; sortBy?: string; sortAsc?: boolean } = {}) {
     this.params = { ...this.params, ...params };
-    this.itemCount = this.persons.length;
-
-    const items = [...this.persons];
-
-    if (this.params.sortBy) {
-      items.sort((a, b) => {
-        const valueA = a[this.params.sortBy];
-        const valueB = b[this.params.sortBy];
-
-        if (typeof valueA === 'string' && typeof valueB === 'string') {
-          return valueA.localeCompare(valueB);
-        }
-        return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
-      });
-
-      if (!this.params.sortAsc) {
-        items.reverse();
-      }
-    }
-
-    const offset = this.params.offset || 0;
-    const limit = this.params.limit || 10;
-    this.displayedUsers = items.slice(offset, offset + limit);
+    this.itemResource.query(this.params).then(items => this.items = items);
   }
 
   sort(column: string) {

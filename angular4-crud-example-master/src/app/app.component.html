@@ -33,55 +33,55 @@
 
   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-edit-Modal" (click)="initUser()">Add</button>
 
-  <div id="persons-grid" class="table-responsive mt-3">
-    <h4>Angular 4 CRUD Example With Bootstrap 4 Datatable</h4>
-    <table class="table table-hover table-bordered mt-2">
-      <thead>
-        <tr>
-          <th scope="col" style="cursor: pointer;" (click)="sort('name')">
-            Name <span *ngIf="params.sortBy === 'name'">{{ params.sortAsc ? '▲' : '▼' }}</span>
-          </th>
-          <th scope="col" style="cursor: pointer;" (click)="sort('jobTitle')">
-            Job title <span *ngIf="params.sortBy === 'jobTitle'">{{ params.sortAsc ? '▲' : '▼' }}</span>
-          </th>
-          <th scope="col">Active</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of displayedUsers" [title]="rowTooltip(item)" (click)="rowClick(item)" (dblclick)="rowDoubleClick(item)">
-          <td>{{ item.name }}</td>
-          <td>{{ item.jobTitle }}</td>
-          <td>
-            <span style="color: grey">
-              <span class="fa fa-check" *ngIf="item.active"></span>
-              <span class="fa fa-times" *ngIf="!item.active"></span>
-            </span>
-          </td>
-          <td>
-            <span style="color: rgb(232, 0, 0); margin-right: 10px;">
-              <a href="javascript:void(0);" (click)="getData(item); $event.stopPropagation()" data-toggle="modal" data-target="#add-edit-Modal">Edit</a>
-            </span>
-            <span style="color: rgb(232, 0, 0);">
-              <a href="javascript:void(0);" (click)="delData(item); $event.stopPropagation()">Delete</a>
-            </span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <data-table id="persons-grid"
+    headerTitle="Angular 4 CRUD Example With Bootstrap 4 Datatable"
+    [items]="items"
+    [itemCount]="itemCount"
+    (reload)="reloadItems($event)"
 
-    <nav *ngIf="lastPage > 1">
-      <ul class="pagination">
-        <li class="page-item" [class.disabled]="currentPage === 1">
-          <a class="page-link" href="#" (click)="changePage(currentPage - 1); $event.preventDefault()">Previous</a>
-        </li>
-        <li class="page-item" *ngFor="let page of pages" [class.active]="currentPage === page">
-          <a class="page-link" href="#" (click)="changePage(page); $event.preventDefault()">{{ page }}</a>
-        </li>
-        <li class="page-item" [class.disabled]="currentPage === lastPage">
-          <a class="page-link" href="#" (click)="changePage(currentPage + 1); $event.preventDefault()">Next</a>
-        </li>
-      </ul>
-    </nav>
-  </div>
+    (rowClick)="rowClick($event)"
+    (rowDoubleClick)="rowDoubleClick($event)"
+    [rowTooltip]="rowTooltip"
+    >
+    <data-table-column
+        [property]="'name'"
+        [header]="'Name'"
+        [sortable]="true"
+        [resizable]="true"
+        >
+    </data-table-column>
+    <data-table-column
+        [property]="'jobTitle'"
+        [header]="'Job title'"
+        [sortable]="true"
+        >        
+    </data-table-column>
+    <data-table-column
+        [property]="'active'"
+        [header]="'Active'"
+        [width]="100"
+        [resizable]="true">
+        <ng-template #dataTableHeader let-item="item">
+            <span style="color: rgb(232, 0, 0)">Active</span>
+        </ng-template>
+        <ng-template #dataTableCell let-item="item">
+            <span style="color: grey">
+            <span class="fa fa-check" *ngIf="item.active"></span>
+            <span class="fa fa-times" *ngIf="!item.active"></span>
+            </span>
+        </ng-template>
+    </data-table-column>
+    <data-table-column
+      [property]="'Actions'"
+      [header]="'Actions'">
+      <ng-template #dataTableCell let-item="item">
+            <span style="color: rgb(232, 0, 0)">
+            <a href="javascript:void(0);" (click)="getData(item)" data-toggle="modal" data-target="#add-edit-Modal">Edit</a>
+            </span>
+            <span style="color: rgb(232, 0, 0)">
+            <a href="javascript:void(0);" (click)="delData(item)">Delete</a>
+            </span>
+      </ng-template>
+    </data-table-column>
+  </data-table>
 </div>
